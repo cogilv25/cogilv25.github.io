@@ -1,4 +1,4 @@
-## a portfolio and blog of my adventures in programming!{: .text-red }
+## a portfolio and blog of my adventures in programming!
 
 - [ ] Need to add something here I suppose
 - [ ] But it's waaay to late for that at the moment...
