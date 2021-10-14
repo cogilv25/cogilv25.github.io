@@ -1,3 +1,8 @@
+---
+layout: default
+---
+
+
 ### Portfolio and blog of my adventures in programming!
 
 - Need to add something here I suppose
