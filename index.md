@@ -2,9 +2,17 @@
 layout: default
 ---
 
+<h2><a href="portfolio">Portfolio</a></h2>
 
-### Portfolio and blog of my adventures in programming!
+<h2><a href="blog">Blog</a></h2>
 
-- Need to add something here I suppose
-- but it's waaay to late for that at the moment...
-- so I'll just leave some random text
+{% for post in site.posts %}
+
+<div  style="margin-left: 10px">
+<h3><a href="{{post.url}}">{{post.title}}</a></h3>
+{{ post.excerpt }}
+</div>
+
+{% endfor %}
+
+<h2><a href="other">Other</a></h2>
