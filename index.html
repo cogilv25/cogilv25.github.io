@@ -1,0 +1,35 @@
+---
+layout: default
+---
+
+<h2><a href="portfolio">Portfolio</a></h2>
+
+<hr/>
+
+<h2><a href="blog">Blog</a></h2>
+
+<ul>
+{% for post in site.posts %}
+	{% if for.getindex > 10 %}
+		{% break %}
+	{% endif %}
+<li>
+<div style="margin-left: 10px">
+<h3 style="display:inline;"><a href="{{post.url}}">{{post.title}}</a></h3>
+
+{% for category in post.categories reversed %}
+<a style="font-size: 80%; float: right; margin-top: 3px" href="{{site.baseurl}}/{{category}}">{{category | capitalize}}{% unless forloop.last %}.{%else%},&nbsp{% endunless %}</a>
+
+{% endfor %}
+
+{{ post.excerpt }}
+</div>
+</li>
+{% unless forloop.last %} <hr/> {% endunless %}
+{% endfor %}
+
+</ul>
+
+<hr/>
+
+<h2><a href="other">Other</a></h2>

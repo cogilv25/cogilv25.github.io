@@ -2,6 +2,18 @@
 layout: default
 ---
 
-<h2 style="margin-bottom: -15px;">{{ page.title }}</h2>
-<p>{{ page.date | date_to_string }}</p>
+
+<h2 style="margin-bottom: 0px;">{{ page.title }}</h2>
+
+
+{{ page.date | date_to_string }}
+
+
+{% for category in page.categories reversed %}
+<a style="font-size: 80%; float: right; margin-top: 3px" href="{{site.baseurl}}/{{category}}">{{category | capitalize}}{% unless forloop.last %}.{%else%},&nbsp{% endunless %}</a>
+
+{% endfor %}
 {{ content }}
+
+</br>
+<p>Written by: {{page.author}}</p>
