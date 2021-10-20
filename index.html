@@ -2,10 +2,24 @@
 layout: default
 ---
 
+<h2><a href="services">Services</a></h2>
+<p style="margin-left: 10px; margin-top: -20px">I provide a number of services in Shetland:</p>
+<ul>
+<li style="margin-bottom: 4px;">Custom pc building</li>
+<li style="margin-bottom: 4px;">Custom websites (like this one)</li>
+<li style="margin-bottom: 4px;">Custom made software for niche applications</li>
+<li style="margin-bottom: 4px;">Pc repairs and maintenance</li>
+<li style="margin-bottom: 4px;">Installation and/or configuration of home networks</li>
+<li style="margin-bottom: 4px;">Tutoring for software development</li>
+<li style="margin-bottom: 4px;">Help learning how computers work or how to use them</li>
+<li style="margin-bottom: 4px;">Helpful advice on all things technology</li>
+</ul>
+
+<hr style="margin-top:  -5px; margin-bottom: 10px;"/>
 <h2><a href="portfolio">Portfolio</a></h2>
+<p style="margin-left: 10px;"">I will add some examples of my work with pictures here...</p>
 
-<hr/>
-
+<hr style="margin-top:  -5px; margin-bottom: 10px;"/>
 <h2><a href="blog">Blog</a></h2>
 
 <ul>
@@ -14,7 +28,6 @@ layout: default
 		{% break %}
 	{% endif %}
 <li>
-<div style="margin-left: 10px">
 <h3 style="display:inline;"><a href="{{post.url}}">{{post.title}}</a></h3>
 
 {% for category in post.categories reversed %}
@@ -23,13 +36,8 @@ layout: default
 {% endfor %}
 
 {{ post.excerpt }}
-</div>
 </li>
 {% unless forloop.last %} <hr/> {% endunless %}
 {% endfor %}
 
 </ul>
-
-<hr/>
-
-<h2><a href="other">Other</a></h2>
