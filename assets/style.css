@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Spectral|Merriweather&display=swap');
-
 .title 
 {
-  font-family: 'Merriweather', sans-serif;
+  font-family: 'Merriweather', serif;
   font-size: 3rem;
   color: rgb(20,20,20);
   margin: 1rem;
@@ -15,6 +13,18 @@
   background-color: rgb(255,211,12);
   background: -webkit-linear-gradient(20deg, rgb(168,131,8) 67%, rgb(255,211,12) 94%, rgb(231,202,5) 100%);
   background: linear-gradient(20deg, rgb(168,131,8) 67%, rgb(255,211,12) 94%, rgb(231,202,5) 100%);
+}
+
+.bg-grey
+{
+  background-color: rgb(150, 150, 150);
+  border-radius: 25px;
+}
+
+label
+{
+  font-family: Spectral, sans-serif;
+  font-weight: bolder;
 }
 
 .navbar-link

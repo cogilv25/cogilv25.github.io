@@ -4,12 +4,16 @@
 		<meta name="viewport" content="width=device-width"; initial-scale="1.0" />
 		
 		<title>Calum Lindsay</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Spectral&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="assets/style.css">
 	</head>
 
 	<body>
 		<div style="width: 100%; display: flex; justify-content: center; flex-wrap: wrap;">
-			<div class="navbar">
+			<div id="navbar" class="navbar">
 				<nav>
 					<a class="navbar-link" href="#">Home</a>
 					<a class="navbar-link" href="#">CV</a>
@@ -19,17 +23,237 @@
 			</div>
 			<div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
 				<div style="width: 100%; padding: 5%; display: flex; justify-content: center;">
-					<div style="background: linear-gradient(20deg, rgb(168,131,8) 67%, rgb(255,211,12) 94%, rgb(231,202,5) 100%); width: 210px; height: 210px; border-radius: 210px; display: flex; align-items: center; justify-content: space-around;">
-						<img src="assets/me.jpg" style="width: 200px; height: 200px;  border-radius: 200px;">
+					<div id="badge" style="background: linear-gradient(20deg, rgb(168,131,8) 67%, rgb(255,211,12) 94%, rgb(231,202,5) 100%); width: 210px; height: 210px; border-radius: 210px; display: flex; align-items: center; justify-content: space-around;">
+						<img src="assets/me.jpg" style="width: 94%; height: 94%;  border-radius: 150%;">
 					</div>
 				</div>
 
 			</div>
 		</div>
 
+		<div style="max-width: 960px; margin: auto; display: flex; justify-content: space-around;">
+
+			<div style="width: 30%; height: 100%;">
+				<div id="box1" style="width: 100%; height: 50px;"></div>
+				<div class="bg-grey" style="margin-top: 10px; width:100%; padding: 1rem; box-sizing: border-box;">
+					<div class="bg-grey">
+						<div style="display: flex; justify-content: space-between;">
+							<label>R</label>
+							<input oninput="updateGradient(0);" id="R1" style="width: 80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>G</label>
+							<input oninput="updateGradient(0);" id="G1" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>B</label>
+							<input oninput="updateGradient(0);" id="B1" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>Percent</label>
+							<input oninput="percentChanged(0);" id="P1" style="width:80%;" type="range" min="0" max="100">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div style="width: 30%; height: 100%;">
+				<div id="box2" style="width: 100%; height: 50px;"></div>
+				<div class="bg-grey" style="margin-top: 10px; width:100%; padding: 1rem; box-sizing: border-box;">
+					<div class="bg-grey">
+						<div style="display: flex; justify-content: space-between;">
+							<label>R</label>
+							<input oninput="updateGradient(1);" id="R2" style="width: 80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>G</label>
+							<input oninput="updateGradient(1);" id="G2" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>B</label>
+							<input oninput="updateGradient(1);" id="B2" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>Percent</label>
+							<input oninput="percentChanged(1);" id="P2" style="width:80%;" type="range" min="0" max="100">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div style="width: 30%; height: 100%;">
+				<div id="box3" style="width: 100%; height: 50px;"></div>
+				<div class="bg-grey" style="margin-top: 10px; width:100%; padding: 1rem; box-sizing: border-box;">
+					<div class="bg-grey">
+						<div style="display: flex; justify-content: space-between;">
+							<label>R</label>
+							<input oninput="updateGradient(2);" id="R3" style="width: 80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>G</label>
+							<input oninput="updateGradient(2);" id="G3" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>B</label>
+							<input oninput="updateGradient(2);" id="B3" style="width:80%;" type="range" min="0" max="255">
+						</div>
+						<div style="display: flex; justify-content: space-between;">
+							<label>Percent</label>
+							<input oninput="percentChanged(2);" id="P3" style="width:80%;" type="range" min="0" max="100">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
 		<div style="width:100%; display: flex; justify-content: center;">
 			<h1 class="title"> Calum Lindsay </h1>
 		</div>
+
+		<script>
+			colInput = 
+			[
+				[
+					document.getElementById('R1'),
+					document.getElementById('G1'),
+					document.getElementById('B1')
+				],
+
+				[
+					document.getElementById('R2'),
+					document.getElementById('G2'),
+					document.getElementById('B2')
+				],
+
+				[
+					document.getElementById('R3'),
+					document.getElementById('G3'),
+					document.getElementById('B3')
+				]
+			];
+
+			perInput = 
+			[
+				document.getElementById('P1'),
+				document.getElementById('P2'),
+				document.getElementById('P3')
+			];
+
+
+			bar = document.getElementById('navbar');
+			badge = document.getElementById('badge');
+			boxes = 
+			[
+				document.getElementById('box1'),
+				document.getElementById('box2'), 
+				document.getElementById('box3')
+			];
+
+			function initInputs()
+			{
+				colInput[0][0].value = colors[0][0];
+				colInput[0][1].value = colors[0][1];
+				colInput[0][2].value = colors[0][2];
+				colInput[1][0].value = colors[1][0];
+				colInput[1][1].value = colors[1][1];
+				colInput[1][2].value = colors[1][2];
+				colInput[2][0].value = colors[2][0];
+				colInput[2][1].value = colors[2][1];
+				colInput[2][2].value = colors[2][2];
+
+				perInput[0].value = percentages[0];
+				perInput[1].value = percentages[1];
+				perInput[2].value = percentages[2];
+
+				colStrings = 
+				[
+					'rgb(' + colors[0][0] + ', ' + colors[0][1] + ', ' + colors[0][2] + ')',
+					'rgb(' + colors[1][0] + ', ' + colors[1][1] + ', ' + colors[1][2] + ')',
+					'rgb(' + colors[2][0] + ', ' + colors[2][1] + ', ' + colors[2][2] + ')'
+				];
+
+				boxes[0].style.backgroundColor = colStrings[0];
+				boxes[1].style.backgroundColor = colStrings[1];
+				boxes[2].style.backgroundColor = colStrings[2];
+			}
+
+			function updateGradient(colorChanged)
+			{
+				if(colorChanged >= 0)
+				{
+					colors[colorChanged][0] = colInput[colorChanged][0].value;
+					colors[colorChanged][1] = colInput[colorChanged][1].value;
+					colors[colorChanged][2] = colInput[colorChanged][2].value;
+
+					colStrings = 
+					[
+						'rgb(' + colors[0][0] + ', ' + colors[0][1] + ', ' + colors[0][2] + ')',
+						'rgb(' + colors[1][0] + ', ' + colors[1][1] + ', ' + colors[1][2] + ')',
+						'rgb(' + colors[2][0] + ', ' + colors[2][1] + ', ' + colors[2][2] + ')'
+					];
+
+					boxes[colorChanged].style.backgroundColor = colStrings[colorChanged];
+				}
+
+				var gradientString = "-webkit-linear-gradient(20deg, " +
+					colStrings[0] + " " + percentages[0] + "%, " +
+					colStrings[1] + " " + percentages[1] + "%, " +
+					colStrings[2] + " " + percentages[2] + "%)";
+
+				bar.style.backgroundImage = gradientString;
+				badge.style.backgroundImage = gradientString;
+				console.log(gradientString);
+			}
+
+			function percentChanged(index)
+			{
+				percentages[index] = parseInt(perInput[index].value);
+				if(index == 2)
+				{
+					if(percentages[1] > percentages[2])
+					{
+						perInput[1].value = percentages[2];
+						percentages[1] = percentages[2];
+						if(percentages[0] > percentages[1])
+						{
+							perInput[0].value = percentages[1];
+							percentages[0] = percentages[1];
+						}
+					}
+				}
+				else if(index == 0)
+				{
+					if(percentages[0] > percentages[1])
+					{
+						perInput[1].value = percentages[0];
+						percentages[1] = percentages[0];
+						if(percentages[1] > percentages[2])
+						{
+							perInput[2].value = percentages[1];
+							percentages[2] = percentages[1];
+						}
+					}
+				}
+				else if(percentages[0] > percentages[1])
+				{
+					perInput[0].value = percentages[1];
+					percentages[0] = percentages[1];
+				}
+				else if(percentages[2] < percentages[1])
+				{
+					perInput[2].value = percentages[1];
+					percentages[2] = percentages[1];
+				}
+				updateGradient(-1);
+			}
+
+
+		    colors = [[28,67,163], [31,63,216], [0,50,101]];
+		    percentages = [67, 94, 100];
+		    initInputs();
+		    updateGradient(-1);
+		</script>
 	</body>
 </html>
 
