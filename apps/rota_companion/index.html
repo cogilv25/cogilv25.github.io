@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width"; initial-scale="1.0" />
+		
+		<title>Calum Lindsay</title>
+		<link rel="stylesheet" href="/assets/style.css">
+	</head>
+
+	<body>
+		<div style="width: 100%; display: flex; justify-content: center; flex-wrap: wrap;">
+			
+			<div class="navbar">
+				<div class="navbar-brand">
+					<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+			            alt="Rota Companion Logo"
+			            class="rc-nav-icon">>
+
+					  <!-- subtle grid -->
+					  <g stroke="#C9CED6" stroke-width="1.5" opacity="0.9">
+					    <rect x="14" y="14" width="36" height="36" rx="6"/>
+					    <line x1="14" y1="26" x2="50" y2="26"/>
+					    <line x1="14" y1="38" x2="50" y2="38"/>
+					    <line x1="26" y1="14" x2="26" y2="50"/>
+					    <line x1="38" y1="14" x2="38" y2="50"/>
+					  </g>
+
+					  <!-- companion dot -->
+					  <circle cx="38" cy="26" r="4.5" fill="#4F6F8F"/>
+
+					</svg>
+					<h1 class="title"> CCR Rota Companion - Unofficial </h1>
+				</div>
+
+				<nav>
+					<a class="navbar-link" href="/apps">Exit</a>
+				</nav>
+			</div>
+			<div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+				<div style="width: 100%; padding: 5%; display: flex; justify-content: center;">
+				</div>
+
+			</div>
+		</div>
+
+		<h1>Directory Viewer</h1>
+
+	    <p>
+	        Select a folder to display its directory structure.
+	    </p>
+
+	    <input
+	        type="file"
+	        id="folderPicker"
+	        webkitdirectory
+	        multiple
+	    >
+
+	    <pre id="output" style="white-space: pre; font-family: monospace;"></pre>
+	</body>
+	<script>
+
+        const output = document.getElementById("output");
+
+        function buildTree(paths) {
+
+            const root = {};
+
+            for (const path of paths) {
+
+                const parts = path.split("/");
+
+                let current = root;
+
+                for (const part of parts) {
+
+                    if (!current[part]) {
+                        current[part] = {};
+                    }
+
+                    current = current[part];
+                }
+            }
+
+            return root;
+        }
+
+        function renderTree(node, prefix = "") {
+
+            const keys = Object.keys(node).sort();
+
+            let result = "";
+
+            keys.forEach((key, index) => {
+
+                const isLast = index === keys.length - 1;
+
+                result += prefix;
+                result += isLast ? "└── " : "├── ";
+                result += key + "\n";
+
+                result += renderTree(
+                    node[key],
+                    prefix + (isLast ? "    " : "│   ")
+                );
+            });
+
+            return result;
+        }
+
+        document
+            .getElementById("folderPicker")
+            .addEventListener("change", (event) => {
+
+                const files = [...event.target.files];
+
+                if (!files.length) {
+                    output.textContent = "";
+                    return;
+                }
+
+                const paths = files.map(file =>
+                    file.webkitRelativePath.replaceAll("\\", "/")
+                );
+
+                const tree = buildTree(paths);
+
+                output.textContent =
+                    `Found ${files.length} files\n\n` +
+                    renderTree(tree);
+            });
+
+    </script>
+</html>
+

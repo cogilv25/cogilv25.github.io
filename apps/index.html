@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width"; initial-scale="1.0" />
+		
+		<title>Calum Lindsay</title>
+		<link rel="stylesheet" href="/assets/style.css">
+	</head>
+
+	<body>
+		<div style="width: 100%; display: flex; justify-content: center; flex-wrap: wrap;">
+			
+			<div class="navbar">
+				<div class="navbar-brand">
+					<img src="/assets/me.jpg" class="avatar">
+					<h1 class="title"> Calum Lindsay </h1>
+				</div>
+
+				<nav>
+					<a class="navbar-link" href="/">Home</a>
+					<a class="navbar-link" href="#">CV</a>
+					<a class="navbar-link" href="#">Blog</a>
+					<a class="navbar-link" href="projects">Projects</a>
+					<a class="navbar-link" href="apps">Apps</a>
+				</nav>
+			</div>
+			
+			<div class="apps-container">
+
+			    <div
+			        class="app-card"
+			        data-app-url="rota_companion">
+
+			        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+			            alt="Rota Companion Logo"
+			            class="app-card-image">>
+
+					  <!-- subtle grid -->
+					  <g stroke="#C9CED6" stroke-width="1.5" opacity="0.9">
+					    <rect x="14" y="14" width="36" height="36" rx="6"/>
+					    <line x1="14" y1="26" x2="50" y2="26"/>
+					    <line x1="14" y1="38" x2="50" y2="38"/>
+					    <line x1="26" y1="14" x2="26" y2="50"/>
+					    <line x1="38" y1="14" x2="38" y2="50"/>
+					  </g>
+
+					  <!-- companion dot -->
+					  <circle cx="38" cy="26" r="4.5" fill="#4F6F8F"/>
+
+					</svg>
+
+			        <div class="app-card-content">
+
+			            <div class="app-card-header">
+
+			                <h2>CCR Rota Companion - Unofficial</h2>
+
+			                <a
+			                    href="projects/rota_companion"
+			                    class="project-info"
+			                    title="About this project">
+			                    ⓘ
+			                </a>
+
+			            </div>
+
+			            <p>
+			                Timesheet generation and rota data support tool
+			            </p>
+
+			        </div>
+
+			    </div>
+
+			</div>
+
+		</div>
+
+		<div style="width:100%; display: flex; justify-content: center;">
+			
+		</div>
+	</body>
+	<script>
+	document.querySelectorAll(".app-card").forEach(card => {
+
+	    card.addEventListener("click", () => {
+
+	        const url = card.dataset.appUrl;
+
+	        if (url)
+	        {
+	            window.location.href = url;
+	        }
+	    });
+
+	});
+
+	document.querySelectorAll(".project-info").forEach(link => {
+
+	    link.addEventListener("click", event => {
+
+	        event.stopPropagation();
+
+	    });
+
+	});
+	</script>
+</html>
+
