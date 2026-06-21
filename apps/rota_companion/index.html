@@ -1,136 +1,190 @@
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width"; initial-scale="1.0" />
-		
-		<title>Calum Lindsay</title>
-		<link rel="stylesheet" href="/assets/style.css">
-	</head>
+<head>
+    <meta name="viewport" content="width=device-width"; initial-scale="1.0" />
 
-	<body>
-		<div style="width: 100%; display: flex; justify-content: center; flex-wrap: wrap;">
-			
-			<div class="navbar">
-				<div class="navbar-brand">
-					<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
-			            alt="Rota Companion Logo"
-			            class="rc-nav-icon">>
+    <title>CCR Rota Companion</title>
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
 
-					  <!-- subtle grid -->
-					  <g stroke="#C9CED6" stroke-width="1.5" opacity="0.9">
-					    <rect x="14" y="14" width="36" height="36" rx="6"/>
-					    <line x1="14" y1="26" x2="50" y2="26"/>
-					    <line x1="14" y1="38" x2="50" y2="38"/>
-					    <line x1="26" y1="14" x2="26" y2="50"/>
-					    <line x1="38" y1="14" x2="38" y2="50"/>
-					  </g>
+<body>
+    <div style="width: 100%; padding-bottom: 10px; display: flex; justify-content: center; flex-wrap: wrap;">
 
-					  <!-- companion dot -->
-					  <circle cx="38" cy="26" r="4.5" fill="#4F6F8F"/>
+        <div class="navbar">
+            <div class="navbar-brand">
+                <svg width="64"
+                     height="64"
+                     viewBox="0 0 64 64"
+                     fill="none"
+                     xmlns="http://www.w3.org/2000/svg"
+                     alt="Rota Companion Logo"
+                     class="rc-nav-icon">
 
-					</svg>
-					<h1 class="title"> CCR Rota Companion - Unofficial </h1>
-				</div>
+                    <g stroke="#C9CED6" stroke-width="1.5" opacity="0.9">
+                        <rect x="14" y="14" width="36" height="36" rx="6"/>
+                        <line x1="14" y1="26" x2="50" y2="26"/>
+                        <line x1="14" y1="38" x2="50" y2="38"/>
+                        <line x1="26" y1="14" x2="26" y2="50"/>
+                        <line x1="38" y1="14" x2="38" y2="50"/>
+                    </g>
 
-				<nav>
-					<a class="navbar-link" href="/apps">Exit</a>
-				</nav>
-			</div>
-			<div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
-				<div style="width: 100%; padding: 5%; display: flex; justify-content: center;">
-				</div>
+                    <circle cx="38" cy="26" r="4.5" fill="#4F6F8F"/>
+                </svg>
 
-			</div>
+                <h1 class="title">
+                    CCR Rota Companion - Unofficial
+                </h1>
+            </div>
+
+            <nav>
+                <a class="navbar-link" href="/apps">Exit</a>
+            </nav>
+        </div>
+    </div>
+
+    <button id="workspaceButton" style="width: 250px; height: 50px; border: solid 1px #B0B0B0; cursor: pointer; border-radius: 10px; font-family: 'Roboto', sans-serif; font-size: 1.5rem; font-weight: 500; position: absolute; margin-left: -125px; top: 50%; left: 50%" onclick="folderPicker.click()">Start</button>
+
+    <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-wrap: wrap;">
+    	
+    	<div id="filelist" class="file-list">
+
 		</div>
+	</div>
 
-		<h1>Directory Viewer</h1>
+    <input type="file" id="folderPicker" webkitdirectory multiple hidden>
 
-	    <p>
-	        Select a folder to display its directory structure.
-	    </p>
+</body>
 
-	    <input
-	        type="file"
-	        id="folderPicker"
-	        webkitdirectory
-	        multiple
-	    >
+<script>
 
-	    <pre id="output" style="white-space: pre; font-family: monospace;"></pre>
-	</body>
-	<script>
+    const masterSelect = document.getElementById("masterRota");
+    const paySelect = document.getElementById("payPeriod");
+    const selection = document.getElementById("selection");
+    const fileList = document.getElementById("filelist");
+    const wsBtn = document.getElementById("workspaceButton");
+    selectedFile = null;
 
-        const output = document.getElementById("output");
+    let masterFiles = [];
+    let payFiles = [];
 
-        function buildTree(paths) {
+    document.querySelectorAll(".file-item").forEach(item => {
 
-            const root = {};
+	    item.addEventListener("click", () => {
 
-            for (const path of paths) {
+	        document
+	            .querySelectorAll(".file-item")
+	            .forEach(i => i.classList.remove("selected"));
 
-                const parts = path.split("/");
+	        item.classList.add("selected");
 
-                let current = root;
+	        const filename = item.dataset.file;
 
-                for (const part of parts) {
+	        console.log(filename);
+	    });
 
-                    if (!current[part]) {
-                        current[part] = {};
-                    }
+	});
 
-                    current = current[part];
+    document
+        .getElementById("folderPicker")
+        .addEventListener("change", (event) => {
+
+        	wsBtn.hidden = true;
+
+            const files = [...event.target.files];
+
+            masterFiles = [];
+            payFiles = [];
+
+            files.forEach(file => {
+
+                if (/^\d/.test(file.name)) {
+                    payFiles.push(file);
                 }
+                else {
+                    masterFiles.push(file);
+                }
+            });
+
+            masterFiles.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+            payFiles.sort((a, b) =>
+            {
+                const numA = parseInt(a.name.match(/^\d+/)[0], 10);
+			    const numB = parseInt(b.name.match(/^\d+/)[0], 10);
+
+			    return numA - numB;
+			});
+
+			payFiles.forEach(file => {
+                    const item = document.createElement("div");
+                    item.classList.add("file-item");
+                    item.textContent = file.name;
+                    item.addEventListener("click", () => { document.querySelectorAll(".file-item").forEach(i => i.classList.remove("selected")); item.classList.add("selected"); selectedFile = file; });
+                    fileList.appendChild(item);
+                    console.log("Added " + file.name + "to the list\n");
+                });
+
+            masterFiles.forEach((file, index) => {
+
+                const option = document.createElement("option");
+
+                option.value = index;
+                option.textContent = file.name;
+
+                masterSelect.appendChild(option);
+            });
+
+            if (masterFiles.length > 0) {
+                masterSelect.disabled = false;
             }
+        });
 
-            return root;
+    masterSelect.addEventListener("change", () => {
+
+        paySelect.innerHTML =
+            '<option value="">Choose a pay period...</option>';
+
+        paySelect.disabled = false;
+
+        payFiles.forEach((file, index) => {
+
+            const option = document.createElement("option");
+
+            option.value = index;
+            option.textContent = file.name;
+
+            paySelect.appendChild(option);
+        });
+
+        selection.textContent = "";
+    });
+
+    paySelect.addEventListener("change", () => {
+
+        const masterFile =
+            masterFiles[masterSelect.value];
+
+        const payFile =
+            payFiles[paySelect.value];
+
+        if (masterFile && payFile) {
+
+            selection.innerHTML =
+                "<strong>Master Rota:</strong> " +
+                masterFile.name +
+                "<br>" +
+                "<strong>Pay Period:</strong> " +
+                payFile.name;
+
+            // Process the files here:
+            // masterFile
+            // payFile
         }
+    });
 
-        function renderTree(node, prefix = "") {
+</script>
 
-            const keys = Object.keys(node).sort();
-
-            let result = "";
-
-            keys.forEach((key, index) => {
-
-                const isLast = index === keys.length - 1;
-
-                result += prefix;
-                result += isLast ? "└── " : "├── ";
-                result += key + "\n";
-
-                result += renderTree(
-                    node[key],
-                    prefix + (isLast ? "    " : "│   ")
-                );
-            });
-
-            return result;
-        }
-
-        document
-            .getElementById("folderPicker")
-            .addEventListener("change", (event) => {
-
-                const files = [...event.target.files];
-
-                if (!files.length) {
-                    output.textContent = "";
-                    return;
-                }
-
-                const paths = files.map(file =>
-                    file.webkitRelativePath.replaceAll("\\", "/")
-                );
-
-                const tree = buildTree(paths);
-
-                output.textContent =
-                    `Found ${files.length} files\n\n` +
-                    renderTree(tree);
-            });
-
-    </script>
 </html>
-
