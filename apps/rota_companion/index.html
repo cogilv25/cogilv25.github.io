@@ -6,10 +6,11 @@
 
     <title>CCR Rota Companion</title>
     <link rel="stylesheet" href="/assets/style.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
-    <div style="width: 100%; padding-bottom: 10px; display: flex; justify-content: center; flex-wrap: wrap;">
+    <div style="width: 100%; padding-bottom: 4px; display: flex; justify-content: center; flex-wrap: wrap;">
 
         <div class="navbar">
             <div class="navbar-brand">
@@ -45,7 +46,11 @@
 
     <button id="workspaceButton" style="width: 250px; height: 50px; border: solid 1px #B0B0B0; cursor: pointer; border-radius: 10px; font-family: 'Roboto', sans-serif; font-size: 1.5rem; font-weight: 500; position: absolute; margin-left: -125px; top: 50%; left: 50%" onclick="folderPicker.click()">Start</button>
 
-    <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-wrap: wrap;">
+    <div style="width: 80%; margin: 0px 10%; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-wrap: wrap;">
+
+    	<div>
+    		Please select a year to work with, the master rota from that year will then be used for all operations. (horizontal list?)
+    	</div>
     	
     	<div id="filelist" class="file-list">
 
@@ -57,6 +62,102 @@
 </body>
 
 <script>
+	var selYear = 0;
+	var years = [];
+	let months = [];
+	var masterRotaFiles = [];
+	var payPeriodRotaFiles = [];
+	var workbooks = [];
+	var payLabels = [];
+
+	// Loads all data from all the rotas excluding the MASTER folder. 
+	//  The function will return false if it detects the folder 
+	//  selected is not the top level CCR Rota folder.
+	async function loadRotas(files)
+	{
+		for (const file of files)
+		{
+			const parts = file.webkitRelativePath.split("/");
+			if(/^\d{4}$/.test(parts[1]))
+			{
+				const year = parseInt(parts[1],10) - 2026;
+
+				if(years[year] == null)
+				{
+					years[year] = parts[1];
+					payPeriodRotaFiles[year] = [];
+					payLabels[year] = [];
+					months[year] = ["January","Feburary","March","April","May","June","July","August","September","October","November","December"];
+					workbooks[year] = [];
+				}
+
+				if(file.name === "MASTER ROTA PATTERN.xlsx")
+				{
+					masterRotaFiles[year] = file;
+				}
+				else
+				{
+					const match = file.name.match(/^\d+/);
+
+					if(match)
+						payPeriodRotaFiles[year][parseInt(match[0], 10)] = file;
+				}
+
+				if (!/^\d{2}\..*\.xlsx$/i.test(file.name) && !(file.name === "MASTER ROTA PATTERN.xlsx"))
+					continue;
+
+				let index = 12;
+				let wbLabel = "Master";
+				match = file.name.match(/^(\d{2})\..*$/i);
+				if(match)
+				{
+					index = Number(match[1]) - 1;
+					wbLabel = months[year][index];
+				}
+
+				const data = await file.arrayBuffer();
+				workbooks[year][index] = [wbLabel, XLSX.read(data, { type: "array", cellDates: true})];
+
+			}
+			else if(parts[1] !== "MASTER")
+			{
+				console.log(file.webkitRelativePath + " ? " + parts[1]);
+				return false;
+			}
+		}
+
+		for(let month = 0; month < 12; ++month)
+		{
+			payLabels[0][month] = [];
+			if(workbooks[0][month] == null) continue;
+			const wb = workbooks[0][month];
+			for(const wsName of wb[1].SheetNames)
+			{
+				const ws = wb[1].Sheets[wsName];
+				const weekBegin = ws.C4?.v;
+				const weekEnd = ws.AM4?.v;
+
+				if(weekBegin instanceof Date && weekEnd	instanceof Date)
+				{
+					let pLbl = weekBegin.toLocaleDateString() + " -> " + weekEnd.toLocaleDateString();
+					console.log(wb[0] + ": " + pLbl);
+					payLabels[0][month].push(pLbl);
+				}
+			}
+		}
+
+		// TODO: Process rotas using SheetJS
+		return true;
+	}
+
+	function addSelectorListItem(label, clickFun)
+	{
+		const item = document.createElement("div");
+        item.classList.add("file-item");
+        item.textContent = label;
+        item.addEventListener("click", clickFun);
+        fileList.appendChild(item);
+	}
 
     const masterSelect = document.getElementById("masterRota");
     const paySelect = document.getElementById("payPeriod");
@@ -79,8 +180,6 @@
 	        item.classList.add("selected");
 
 	        const filename = item.dataset.file;
-
-	        console.log(filename);
 	    });
 
 	});
@@ -93,97 +192,129 @@
 
             const files = [...event.target.files];
 
-            masterFiles = [];
-            payFiles = [];
-
-            files.forEach(file => {
-
-                if (/^\d/.test(file.name)) {
-                    payFiles.push(file);
-                }
-                else {
-                    masterFiles.push(file);
-                }
-            });
-
-            masterFiles.sort((a, b) =>
-                a.name.localeCompare(b.name)
-            );
-
-            payFiles.sort((a, b) =>
+            if(loadRotas(files) == false)
             {
-                const numA = parseInt(a.name.match(/^\d+/)[0], 10);
-			    const numB = parseInt(b.name.match(/^\d+/)[0], 10);
-
-			    return numA - numB;
-			});
-
-			payFiles.forEach(file => {
-                    const item = document.createElement("div");
-                    item.classList.add("file-item");
-                    item.textContent = file.name;
-                    item.addEventListener("click", () => { document.querySelectorAll(".file-item").forEach(i => i.classList.remove("selected")); item.classList.add("selected"); selectedFile = file; });
-                    fileList.appendChild(item);
-                    console.log("Added " + file.name + "to the list\n");
-                });
-
-            masterFiles.forEach((file, index) => {
-
-                const option = document.createElement("option");
-
-                option.value = index;
-                option.textContent = file.name;
-
-                masterSelect.appendChild(option);
-            });
-
-            if (masterFiles.length > 0) {
-                masterSelect.disabled = false;
+            	console.log("Failed to Load Rotas");
+            	// Failed, show error.
+            	return;
             }
-        });
+            console.log("Loaded Rotas");
 
-    masterSelect.addEventListener("change", () => {
+            for(let i = 0; i < years.length; ++i)
+			{
+				console.log(i + ": " + years[i]);
+				if(years[i] == null) continue;
+				addSelectorListItem(years[i], (event) =>
+				{
+					document.querySelectorAll(".file-item").forEach(item => item.classList.remove("selected"));
+					event.currentTarget.classList.add("selected");
+					selYear = i;
 
-        paySelect.innerHTML =
-            '<option value="">Choose a pay period...</option>';
+					fileList.textContent = "";
+					for(let month = 0; month < 12; ++month)
+					{
+						for(lbl of payLabels[i][month])
+						{
+							addSelectorListItem(lbl, (event) =>
+							{
+								document.querySelectorAll(".file-item").forEach(item => item.classList.remove("selected"));
+								event.currentTarget.classList.add("selected");
+								// Do things!
+							});
+						}
+					}
+				});
+			}
+    	});
 
-        paySelect.disabled = false;
+            // files.forEach(file => {
 
-        payFiles.forEach((file, index) => {
+            //     if (/^\d/.test(file.name)) {
+            //         payFiles.push(file);
+            //     }
+            //     else {
+            //         masterFiles.push(file);
+            //     }
+            // });
 
-            const option = document.createElement("option");
+            // masterFiles.sort((a, b) =>
+            //     a.name.localeCompare(b.name)
+            // );
 
-            option.value = index;
-            option.textContent = file.name;
+            // payFiles.sort((a, b) =>
+            // {
+            //     const numA = parseInt(a.name.match(/^\d+/)[0], 10);
+			//     const numB = parseInt(b.name.match(/^\d+/)[0], 10);
 
-            paySelect.appendChild(option);
-        });
+			//     return numA - numB;
+			// });
 
-        selection.textContent = "";
-    });
 
-    paySelect.addEventListener("change", () => {
 
-        const masterFile =
-            masterFiles[masterSelect.value];
+			// payFiles.forEach(file => {
+            //         const item = document.createElement("div");
+            //         item.classList.add("file-item");
+            //         item.textContent = file.name;
+            //         item.addEventListener("click", () => { document.querySelectorAll(".file-item").forEach(i => i.classList.remove("selected")); item.classList.add("selected"); selectedFile = file; });
+            //         fileList.appendChild(item);
+            //     });
 
-        const payFile =
-            payFiles[paySelect.value];
+            // masterFiles.forEach((file, index) => {
 
-        if (masterFile && payFile) {
+            //     const option = document.createElement("option");
 
-            selection.innerHTML =
-                "<strong>Master Rota:</strong> " +
-                masterFile.name +
-                "<br>" +
-                "<strong>Pay Period:</strong> " +
-                payFile.name;
+            //     option.value = index;
+            //     option.textContent = file.name;
 
-            // Process the files here:
-            // masterFile
-            // payFile
-        }
-    });
+            //     masterSelect.appendChild(option);
+            // });
+
+            // if (masterFiles.length > 0) {
+            //     masterSelect.disabled = false;
+            // }
+
+    // masterSelect.addEventListener("change", () => {
+
+    //     paySelect.innerHTML =
+    //         '<option value="">Choose a pay period...</option>';
+
+    //     paySelect.disabled = false;
+
+    //     payFiles.forEach((file, index) => {
+
+    //         const option = document.createElement("option");
+
+    //         option.value = index;
+    //         option.textContent = file.name;
+
+    //         paySelect.appendChild(option);
+    //     });
+
+    //     selection.textContent = "";
+    //});
+
+    // paySelect.addEventListener("change", () => {
+
+    //     const masterFile =
+    //         masterFiles[masterSelect.value];
+
+    //     const payFile =
+    //         payFiles[paySelect.value];
+
+    //     if (masterFile && payFile) {
+
+    //         selection.innerHTML =
+    //             "<strong>Master Rota:</strong> " +
+    //             masterFile.name +
+    //             "<br>" +
+    //             "<strong>Pay Period:</strong> " +
+    //             payFile.name;
+
+    //         // Process the files here:
+    //         // masterFile
+    //         // payFile
+    //     }
+    // });
 
 </script>
 
